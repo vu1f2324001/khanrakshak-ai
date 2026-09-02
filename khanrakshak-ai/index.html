@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KHANRAKSHAK AI | Mining Governance Intelligence</title>
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body class="theme-dark">
+
+  <div id="login-overlay" class="login-modal-wrapper active">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="brand-shield"><i data-lucide="shield-alert"></i></div>
+        <h2>KHANRAKSHAK AI</h2>
+        <p class="tagline">Intelligent Governance for Safer, Smarter Mines</p>
+      </div>
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="login-email">Official Ministry / PSU Email</label>
+          <input type="email" id="login-email" value="rajesh.kumar@coalindia.gov.in" required />
+        </div>
+        <div class="form-group">
+          <label for="login-pass">Password / Token Key</label>
+          <input type="password" id="login-pass" value="••••••••••••" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">
+          <span>Authorize & Enter Command Center</span>
+          <i data-lucide="arrow-right"></i>
+        </button>
+      </form>
+      <div class="login-footer">
+        <span class="status-indicator-badge live">Authorized Personnel Only</span>
+        <p>Directorate General of Mines Safety (DGMS) Portal v3.4</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-layout" id="app-layout">
+    
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-icon"><i data-lucide="shield-check"></i></div>
+        <div class="brand-text">
+          <h1>KhanRakshak AI</h1>
+          <span>GovTech Safety Core</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-menu">
+        <button class="nav-item active" data-target="view-dashboard">
+          <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-target="view-mines">
+          <i data-lucide="crosshair"></i><span>Mine Command</span>
+        </button>
+        <button class="nav-item" data-target="view-compliance">
+          <i data-lucide="file-check-2"></i><span>Compliance</span>
+        </button>
+        <button class="nav-item" data-target="view-inspections">
+          <i data-lucide="clipboard-list"></i><span>Inspections</span>
+        </button>
+        <button class="nav-item" data-target="view-actions">
+          <i data-lucide="kanban-square"></i><span>Actions Kanban</span>
+        </button>
+        <button class="nav-item" data-target="view-contractors">
+          <i data-lucide="users-2"></i><span>Contractors</span>
+        </button>
+        <button class="nav-item" data-target="view-documents">
+          <i data-lucide="file-scan"></i><span>Document AI</span>
+        </button>
+        <button class="nav-item" data-target="view-copilot">
+          <i data-lucide="bot"></i><span>AI Copilot</span>
+        </button>
+        <button class="nav-item" data-target="view-analytics">
+          <i data-lucide="line-chart"></i><span>Predictive Risk</span>
+        </button>
+        <button class="nav-item" data-target="view-gis">
+          <i data-lucide="map"></i><span>GIS India Map</span>
+        </button>
+        <button class="nav-item" data-target="view-reports">
+          <i data-lucide="printer"></i><span>Reports</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status">
+          <span class="pulse-dot"></span>
+          <div>
+            <div class="status-title">All Systems Operational</div>
+            <div class="status-sub">Gov DGMS Grid Link Active</div>
+          </div>
+        </div>
+        <div class="user-badge">
+          <div class="user-avatar">RK</div>
+          <div class="user-info">
+            <span class="user-name">Rajesh Kumar</span>
+            <span class="user-role">Regional Safety Officer</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="sidebar-toggle" class="icon-btn mobile-only"><i data-lucide="menu"></i></button>
+          <div class="breadcrumb-container">
+            <span id="page-category">National Overview</span>
+            <span class="breadcrumb-sep">/</span>
+            <h2 id="page-title">Mine Governance Command Center</h2>
+          </div>
+        </div>
+
+        <div class="topbar-center">
+          <div class="global-search-wrapper">
+            <i data-lucide="search"></i>
+            <input type="text" id="global-search-input" placeholder="Search mines, inspections, contractors, violations..." />
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn btn-outline-danger" id="run-simulation-btn">
+            <i data-lucide="zap"></i>
+            <span>Run AI Simulation</span>
+          </button>
+
+          <div class="live-sync-indicator">
+            <span class="live-badge">LIVE</span>
+            <span class="time-text">Updated 2 min ago</span>
+          </div>
+
+          <div class="dropdown-container">
+            <button class="icon-btn notif-btn" id="notif-toggle">
+              <i data-lucide="bell"></i>
+              <span class="badge" id="notif-badge">3</span>
+            </button>
+            <div class="dropdown-menu notif-dropdown" id="notif-dropdown">
+              <div class="dropdown-header">
+                <h6>High-Priority Notifications</h6>
+                <span>Mark all read</span>
+              </div>
+              <div class="notif-list" id="notif-list"></div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="topbar-copilot-btn">
+            <i data-lucide="sparkles"></i>
+            <span>Copilot</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="content-viewport" id="content-viewport">
+
+        <section id="view-dashboard" class="page-view active">
+          <div class="page-header-banner">
+            <div>
+              <h3>Command Center Executive Pulse</h3>
+              <p>Real-time automated compliance, safety risk scoring, and anomaly feeds across 42 coal mines.</p>
+            </div>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-meta"><span class="kpi-title">TOTAL MINES</span><i data-lucide="pickaxe"></i></div>
+              <div class="kpi-value" id="kpi-total-mines">42</div>
+              <div class="kpi-trend neutral"><i data-lucide="minus"></i> Constant (7 Subsidiary Zones)</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-meta"><span class="kpi-title">COMPLIANCE RATE</span><i data-lucide="shield-alert"></i></div>
+              <div class="kpi-value" id="kpi-compliance-rate">87.4%</div>
+              <div class="kpi-trend positive"><i data-lucide="trending-up"></i> ↑ 2.1% vs last cycle</div>
+            </div>
+            <div class="kpi-card highlight-danger">
+              <div class="kpi-meta"><span class="kpi-title">HIGH RISK MINES</span><i data-lucide="flame"></i></div>
+              <div class="kpi-value text-red" id="kpi-high-risk">7</div>
+              <div class="kpi-trend negative"><i data-lucide="trending-up"></i> ↑ 16.7% vs last month</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-meta"><span class="kpi-title">OPEN ACTIONS</span><i data-lucide="check-square"></i></div>
+              <div class="kpi-value" id="kpi-open-actions">23</div>
+              <div class="kpi-trend neutral"><i data-lucide="activity"></i> 14 assigned / 9 review</div>
+            </div>
+            <div class="kpi-card highlight-warning">
+              <div class="kpi-meta"><span class="kpi-title">OVERDUE ITEMS</span><i data-lucide="clock-alert"></i></div>
+              <div class="kpi-value text-yellow" id="kpi-overdue-items">9</div>
+              <div class="kpi-trend negative"><i data-lucide="arrow-up-right"></i> Requires escalations</div>
+            </div>
+            <div class="kpi-card highlight-critical">
+              <div class="kpi-meta"><span class="kpi-title">CRITICAL ALERTS</span><i data-lucide="alert-octagon"></i></div>
+              <div class="kpi-value text-critical" id="kpi-critical-alerts">3</div>
+              <div class="kpi-trend negative"><i data-lucide="siren"></i> Immediate safety orders</div>
+            </div>
+          </div>
+
+          <div class="grid-2-col">
+            <div class="panel">
+              <div class="panel-header">
+                <h5>AI Risk Overview</h5>
+                <span class="panel-subtitle">Calculated via 5-factor DGMS standard</span>
+              </div>
+              <div class="chart-and-legend">
+                <div class="donut-chart-container">
+                  <canvas id="riskOverviewChart"></canvas>
+                </div>
+                <div class="chart-legend-custom">
+                  <div class="leg-item"><span class="color-dot critical"></span> Critical: <strong>3</strong></div>
+                  <div class="leg-item"><span class="color-dot high"></span> High: <strong>7</strong></div>
+                  <div class="leg-item"><span class="color-dot medium"></span> Medium: <strong>12</strong></div>
+                  <div class="leg-item"><span class="color-dot low"></span> Low/Compliant: <strong>20</strong></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <h5>AI Risk Summary & Anomaly Digest</h5>
+                <span class="tag-ai"><i data-lucide="sparkles"></i> Real-time Synthesis</span>
+              </div>
+              <div class="ai-digest-list">
+                <div class="digest-card border-red">
+                  <i data-lucide="alert-triangle" class="icon-danger"></i>
+                  <div>
+                    <h6>Safety Risk Spike detected in Eastern Coalfields</h6>
+                    <p>Safety risk has increased by 12% across the eastern region over the last 14 days due to haul road non-compliance.</p>
+                  </div>
+                </div>
+                <div class="digest-card border-amber">
+                  <i data-lucide="clipboard-x" class="icon-amber"></i>
+                  <div>
+                    <h6>4 Mines Require Immediate Special Inspection</h6>
+                    <p>Mines in Dhanbad and Korba cluster have crossed the 30-day inspection latency threshold.</p>
+                  </div>
+                </div>
+                <div class="digest-card border-blue">
+                  <i data-lucide="user-x" class="icon-blue"></i>
+                  <div>
+                    <h6>3 Contractor Ghost/Anomaly Records Flagged</h6>
+                    <p>Significant discrepancy identified between shift-in gates and digital attendance logs at Mine B & G.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-3-1">
+            <div class="panel">
+              <div class="panel-header between">
+                <div>
+                  <h5>National Mine Governance Matrix</h5>
+                  <span class="panel-subtitle">Live sync across DGMS inspection & telemetry feeds</span>
+                </div>
+                <div class="table-filters">
+                  <input type="text" id="dashboard-mine-filter" class="input-sm" placeholder="Filter by mine or state..." />
+                  <select id="dashboard-risk-filter" class="input-sm">
+                    <option value="ALL">All Risk Levels</option>
+                    <option value="CRITICAL">Critical</option>
+                    <option value="HIGH">High</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="LOW">Low</option>
+                  </select>
+                </div>
+              </div>
+              <div class="table-wrapper">
+                <table class="data-table" id="dashboard-mines-table">
+                  <thead>
+                    <tr>
+                      <th>Mine Code & Name</th>
+                      <th>Location</th>
+                      <th>Compliance</th>
+                      <th>Safety</th>
+                      <th>Env</th>
+                      <th>Open Issues</th>
+                      <th>Risk Score</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <h5>Live Risk Alerts</h5>
+                <span class="pulse-dot"></span>
+              </div>
+              <div class="live-alerts-container" id="live-alerts-stream">
+                </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-mines" class="page-view">
+          <div class="mine-selector-bar panel">
+            <div>
+              <label>Select Active Inspection Target:</label>
+              <select id="active-mine-select" class="input-lg" onchange="switchActiveMine(this.value)">
+                </select>
+            </div>
+            <div class="mine-quick-status" id="mine-quick-status">
+              </div>
+          </div>
+
+          <div class="mine-details-header panel" id="mine-detail-banner">
+            </div>
+
+          <div class="sub-tab-nav">
+            <button class="sub-tab active" data-subtab="sub-overview">Overview</button>
+            <button class="sub-tab" data-subtab="sub-compliance">Compliance Audit</button>
+            <button class="sub-tab" data-subtab="sub-contractors">Contractors & Labour</button>
+            <button class="sub-tab" data-subtab="sub-corrective">Corrective Actions</button>
+          </div>
+
+          <div class="subtab-content active" id="sub-overview">
+            <div class="grid-2-col">
+              <div class="panel explainable-ai-card">
+                <div class="panel-header">
+                  <div class="badge-ai-model">EXPLAINABLE AI REASONING</div>
+                  <h4 id="xai-title">Why is Mine B High Risk?</h4>
+                </div>
+                <div class="xai-factors" id="xai-factors-list">
+                  </div>
+                <div class="ai-assessment-box">
+                  <h6>Synthesized AI Assessment</h6>
+                  <p id="xai-narrative">Mine B's risk increased primarily due to recurring safety violations and overdue environmental documentation. Lack of methane telemetry verification increases acute blast vulnerabilities.</p>
+                </div>
+              </div>
+
+              <div class="panel recommendation-engine-card">
+                <div class="panel-header">
+                  <span class="tag-ai"><i data-lucide="shield-alert"></i> PRESCRIPTIVE ACTION</span>
+                  <h4>Automated Directive</h4>
+                </div>
+                <div class="rec-body">
+                  <div class="rec-headline" id="rec-headline">"Immediate Special Safety Inspection Recommended."</div>
+                  <ul class="rec-actions-checklist" id="rec-actions-list">
+                    <li><i data-lucide="check-circle-2"></i> Schedule emergency DGMS inspection within 24h</li>
+                    <li><i data-lucide="check-circle-2"></i> Impose stop-work on conveyor belt section 4</li>
+                    <li><i data-lucide="check-circle-2"></i> Re-verify contractor shift rosters with biometric gates</li>
+                  </ul>
+                  <div class="rec-buttons-group">
+                    <button class="btn btn-danger" onclick="scheduleInspectionModal()"><i data-lucide="calendar"></i> Schedule Inspection</button>
+                    <button class="btn btn-outline" onclick="assignOfficerModal()"><i data-lucide="user-plus"></i> Assign Officer</button>
+                    <button class="btn btn-primary" onclick="createActionQuick()"><i data-lucide="plus-circle"></i> Create CAPA Action</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel mt-20">
+              <div class="panel-header">
+                <h5>Risk Engine Computational Formula</h5>
+                <span>Governed under Circular No. 4 (DGMS Safety Score Model)</span>
+              </div>
+              <div class="risk-engine-grid">
+                <div class="score-display">
+                  <div class="big-score-ring" id="engine-score-number">82</div>
+                  <div class="score-label">AGGREGATE RISK: <strong>CRITICAL</strong></div>
+                  <span class="score-trend text-red">↑ 8 points in last 30 days</span>
+                </div>
+                <div class="formula-breakdown">
+                  <div class="formula-row">
+                    <div class="formula-meta"><span>Overdue Statutory Compliance (30%)</span><strong id="f-comp">24.5 / 30</strong></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill red" style="width: 82%;"></div></div>
+                  </div>
+                  <div class="formula-row">
+                    <div class="formula-meta"><span>Unresolved Safety Observations (25%)</span><strong id="f-obs">22.0 / 25</strong></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill orange" style="width: 88%;"></div></div>
+                  </div>
+                  <div class="formula-row">
+                    <div class="formula-meta"><span>Recurring Violations History (20%)</span><strong id="f-viol">16.0 / 20</strong></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill orange" style="width: 80%;"></div></div>
+                  </div>
+                  <div class="formula-row">
+                    <div class="formula-meta"><span>Inspection Latency & Frequency (15%)</span><strong id="f-freq">12.5 / 15</strong></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill yellow" style="width: 83%;"></div></div>
+                  </div>
+                  <div class="formula-row">
+                    <div class="formula-meta"><span>Operational & Labour Anomalies (10%)</span><strong id="f-anom">7.0 / 10</strong></div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill green" style="width: 70%;"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="subtab-content" id="sub-compliance">
+            <div class="panel">
+              <h5>Mine Specific Statutory Compliance Register</h5>
+              <div class="table-wrapper mt-15">
+                <table class="data-table" id="mine-compliance-table">
+                  <thead>
+                    <tr><th>Requirement</th><th>Category</th><th>Due Date</th><th>Risk Weight</th><th>Status</th><th>Action</th></tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="subtab-content" id="sub-contractors">
+            <div class="panel">
+              <h5>Contractor Safety Record & Deployment Validation</h5>
+              <div class="table-wrapper mt-15">
+                <table class="data-table" id="mine-contractor-table">
+                  <thead>
+                    <tr><th>Agency Name</th><th>Workers Deployed</th><th>Attendance Sync</th><th>Active Violations</th><th>Risk Rating</th><th>Action</th></tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="subtab-content" id="sub-corrective">
+            <div class="panel">
+              <h5>Open Corrective & Preventive Actions (CAPA)</h5>
+              <div class="table-wrapper mt-15">
+                <table class="data-table" id="mine-actions-table">
+                  <thead>
+                    <tr><th>Action ID</th><th>Observation</th><th>Assigned Officer</th><th>Due Date</th><th>Priority</th><th>Status</th></tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-compliance" class="page-view">
+          <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-meta">TOTAL REQS</div><div class="kpi-value">124</div></div>
+            <div class="kpi-card highlight-success"><div class="kpi-meta">COMPLETED</div><div class="kpi-value text-green">89</div></div>
+            <div class="kpi-card highlight-warning"><div class="kpi-meta">DUE SOON (7D)</div><div class="kpi-value text-yellow">18</div></div>
+            <div class="kpi-card highlight-danger"><div class="kpi-meta">AT RISK</div><div class="kpi-value text-orange">8</div></div>
+            <div class="kpi-card highlight-critical"><div class="kpi-meta">OVERDUE STATUTORY</div><div class="kpi-value text-red">9</div></div>
+          </div>
+
+          <div class="panel mt-20">
+            <div class="panel-header between">
+              <h5>Master Regulatory & Compliance Registry</h5>
+              <div class="filter-row">
+                <select id="comp-category-filter" class="input-sm">
+                  <option value="ALL">All Categories</option>
+                  <option value="Safety">Safety</option>
+                  <option value="Environment">Environment</option>
+                  <option value="Labour">Labour</option>
+                  <option value="Operations">Operations</option>
+                  <option value="Statutory">Statutory</option>
+                </select>
+                <select id="comp-status-filter" class="input-sm">
+                  <option value="ALL">All Statuses</option>
+                  <option value="COMPLIANT">Compliant</option>
+                  <option value="DUE SOON">Due Soon</option>
+                  <option value="AT RISK">At Risk</option>
+                  <option value="OVERDUE">Overdue</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-wrapper">
+              <table class="data-table" id="master-compliance-table">
+                <thead>
+                  <tr>
+                    <th>Requirement Title</th>
+                    <th>Category</th>
+                    <th>Mine Target</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Risk Impact</th>
+                    <th>Responsible Officer</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-inspections" class="page-view">
+          <div class="grid-2-col">
+            <div class="panel">
+              <div class="panel-header">
+                <h5>Field Inspection Digital Workflow</h5>
+                <span class="badge-tag">Mines Act 1952 Forms</span>
+              </div>
+
+              <div class="inspection-timeline-card">
+                <h6>Active Inspection Trail (Mine B - Shift 1)</h6>
+                <div class="timeline-steps">
+                  <div class="step done"><span class="step-time">09:00</span><span>DGMS Inspector Sign-in & Site Entry</span></div>
+                  <div class="step done"><span class="step-time">09:18</span><span>Haulage Conveyor Observation Logged</span></div>
+                  <div class="step done"><span class="step-time">09:27</span><span>Underground Telemetry Photos Uploaded</span></div>
+                  <div class="step active"><span class="step-time">09:42</span><span>AI Detected PPE Violation in Incline 2</span></div>
+                  <div class="step pending"><span class="step-time">10:05</span><span>Corrective Action Auto-Assigned</span></div>
+                  <div class="step pending"><span class="step-time">10:20</span><span>Formal Sign-off by Mine Manager</span></div>
+                </div>
+              </div>
+
+              <form id="inspection-entry-form" class="mt-20" onsubmit="handleInspectionSubmit(event)">
+                <h6>Log Instant Field Observation</h6>
+                <div class="grid-2-col-gap10 mt-10">
+                  <div class="form-group">
+                    <label>Target Mine</label>
+                    <select class="input-sm" id="ins-mine-select"><option>Mine B (Dhanbad)</option><option>Mine F (Odisha)</option></select>
+                  </div>
+                  <div class="form-group">
+                    <label>Location Specifics</label>
+                    <input type="text" class="input-sm" placeholder="e.g. Pit 4 Conveyor Belt" required />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Severity Level</label>
+                  <select class="input-sm" id="ins-severity"><option value="CRITICAL">Critical (Immediate Stop)</option><option value="HIGH">High</option><option value="MEDIUM">Medium</option></select>
+                </div>
+                <div class="form-group">
+                  <label>Observation Description</label>
+                  <textarea class="input-sm" rows="3" placeholder="Describe hazards, missing seals, or regulatory violations..." required></textarea>
+                </div>
+                <div class="btn-group-row">
+                  <button type="button" class="btn btn-outline" onclick="triggerMockPhoto()"><i data-lucide="camera"></i> Photo Upload</button>
+                  <button type="button" class="btn btn-outline" onclick="triggerMockVoice()"><i data-lucide="mic"></i> Voice Note</button>
+                  <button type="submit" class="btn btn-primary"><i data-lucide="cpu"></i> Analyze with AI</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header between">
+                <div>
+                  <h5>AI Safety Vision: Real-time CCTV Inference</h5>
+                  <span class="panel-subtitle">YOLOv8 Edge Computer Vision Integration</span>
+                </div>
+                <span class="status-indicator-badge live">FEED ACTIVE</span>
+              </div>
+
+              <div class="vision-viewport">
+                <div class="vision-mock-canvas" id="vision-canvas">
+                  <div class="bounding-box b-box-safe" style="top: 25%; left: 15%; width: 90px; height: 160px;">
+                    <span class="box-tag">Worker #1 [PPE Safe 96%]</span>
+                  </div>
+                  <div class="bounding-box b-box-viol" style="top: 20%; left: 45%; width: 100px; height: 180px;">
+                    <span class="box-tag danger">NO HELMET [94%]</span>
+                  </div>
+                  <div class="bounding-box b-box-viol" style="top: 30%; left: 72%; width: 85px; height: 150px;">
+                    <span class="box-tag danger">NO VEST [89%]</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="vision-stats-grid mt-15">
+                <div class="vstat-card"><span>Workers Detected</span><strong>3</strong></div>
+                <div class="vstat-card"><span>Helmet Verification</span><strong class="text-orange">2/3 Compliant</strong></div>
+                <div class="vstat-card"><span>Safety Hi-Vis Vest</span><strong class="text-red">1/3 Compliant</strong></div>
+                <div class="vstat-card"><span>Boots / Leg Guards</span><strong class="text-green">3/3 Compliant</strong></div>
+              </div>
+
+              <div class="alert-box-small danger mt-15">
+                <i data-lucide="alert-octagon"></i>
+                <div>
+                  <strong>CV Alert: Immediate PPE Infraction</strong>
+                  <p>Incline No. 2: 2 workers missing reflective safety gear while in transit machinery line.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-actions" class="page-view">
+          <div class="panel-header between mb-15">
+            <div>
+              <h3>Corrective & Preventive Action (CAPA) Board</h3>
+              <p>Direct tracking from AI Detection → Escalation & Closure</p>
+            </div>
+            <button class="btn btn-primary" onclick="openNewActionModal()"><i data-lucide="plus"></i> New Action Ticket</button>
+          </div>
+
+          <div class="kanban-board-container" id="kanban-board">
+            <div class="kanban-col" data-status="OPEN">
+              <div class="col-header"><span>OPEN</span><span class="count-pill">2</span></div>
+              <div class="card-list" id="col-OPEN"></div>
+            </div>
+            <div class="kanban-col" data-status="ASSIGNED">
+              <div class="col-header"><span>ASSIGNED</span><span class="count-pill">3</span></div>
+              <div class="card-list" id="col-ASSIGNED"></div>
+            </div>
+            <div class="kanban-col" data-status="IN_PROGRESS">
+              <div class="col-header"><span>IN PROGRESS</span><span class="count-pill">4</span></div>
+              <div class="card-list" id="col-IN_PROGRESS"></div>
+            </div>
+            <div class="kanban-col" data-status="VERIFICATION">
+              <div class="col-header"><span>VERIFICATION</span><span class="count-pill">2</span></div>
+              <div class="card-list" id="col-VERIFICATION"></div>
+            </div>
+            <div class="kanban-col" data-status="RESOLVED">
+              <div class="col-header"><span>RESOLVED</span><span class="count-pill">5</span></div>
+              <div class="card-list" id="col-RESOLVED"></div>
+            </div>
+            <div class="kanban-col col-danger" data-status="ESCALATED">
+              <div class="col-header"><span>ESCALATED</span><span class="count-pill">2</span></div>
+              <div class="card-list" id="col-ESCALATED"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-contractors" class="page-view">
+          <div class="kpi-grid">
+            <div class="kpi-card"><div class="kpi-meta">ACTIVE CONTRACTORS</div><div class="kpi-value">28</div></div>
+            <div class="kpi-card highlight-danger"><div class="kpi-meta">HIGH RISK CONTRACTORS</div><div class="kpi-value text-red">4</div></div>
+            <div class="kpi-card"><div class="kpi-meta">DEPLOYED WORKERS</div><div class="kpi-value">3,840</div></div>
+            <div class="kpi-card highlight-warning"><div class="kpi-meta">ATTENDANCE ANOMALIES</div><div class="kpi-value text-yellow">14</div></div>
+          </div>
+
+          <div class="anomaly-highlight-banner panel mt-20">
+            <div class="banner-icon"><i data-lucide="alert-triangle"></i></div>
+            <div class="banner-body">
+              <div class="badge-danger-tag">CRITICAL CONTRACTOR DISCREPANCY DETECTED</div>
+              <h4>Shivani Infra Excavations (Mine B - Dhanbad)</h4>
+              <p>Shift Muster Roll claimed <strong>180 underground workers</strong>. Real-time optical gate scanners and RFID lamp counts recorded only <strong>127 verified workers</strong>.</p>
+              <div class="metric-pills mt-10">
+                <span class="pill">Discrepancy: <strong>53 Ghost / Unrecorded Personnel</strong></span>
+                <span class="pill">AI Confidence: <strong>94.2%</strong></span>
+                <span class="pill">Risk Level: <strong>CRITICAL AUDIT BREACH</strong></span>
+              </div>
+            </div>
+            <div class="banner-actions">
+              <button class="btn btn-danger" onclick="triggerContractorAudit('Shivani Infra')">Trigger DGMS Enquiry</button>
+              <button class="btn btn-outline" onclick="freezeMusterRoll('Shivani Infra')">Freeze Shift Invoices</button>
+            </div>
+          </div>
+
+          <div class="panel mt-20">
+            <div class="panel-header">
+              <h5>Contractor Safety Scoring & Statutory Records</h5>
+            </div>
+            <div class="table-wrapper">
+              <table class="data-table" id="contractors-master-table">
+                <thead>
+                  <tr>
+                    <th>Contractor Agency</th>
+                    <th>Assigned Mine</th>
+                    <th>Reported Workers</th>
+                    <th>Attendance Sync</th>
+                    <th>Safety Violations</th>
+                    <th>Repeat Offenses</th>
+                    <th>Risk Score</th>
+                    <th>Status</th>
+                    <th>Audit</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-documents" class="page-view">
+          <div class="page-header-banner">
+            <div>
+              <h3>AI Document Governance Pipeline</h3>
+              <p>Multi-modal OCR, DGMS regulation semantic parsing, and instant corrective action synthesis.</p>
+            </div>
+          </div>
+
+          <div class="upload-drop-card panel" id="doc-drop-zone">
+            <i data-lucide="upload-cloud" class="large-upload-icon"></i>
+            <h4>Upload Inspection Reports, Compliance Certificates, or Air Quality Logs</h4>
+            <p>Drag and drop statutory files here or browse local storage. Supports PDF, DOCX, Scanned JPG, PNG (Max 50MB).</p>
+            <input type="file" id="file-input-element" style="display: none;" onchange="simulateDocUpload(event)" />
+            <button class="btn btn-primary" onclick="document.getElementById('file-input-element').click()">Browse DGMS Files</button>
+          </div>
+
+          <div class="panel mt-20 doc-processing-card" id="doc-processing-pipeline" style="display: none;">
+            <div class="panel-header">
+              <h5>Cognitive Processing Engine</h5>
+              <span id="pipeline-status-text" class="text-yellow">Executing OCR & Knowledge Retrieval...</span>
+            </div>
+            <div class="pipeline-stepper">
+              <div class="p-step" id="ps-1"><span>1</span><p>DOCUMENT UPLOADED</p></div>
+              <div class="p-step" id="ps-2"><span>2</span><p>OCR PARSING</p></div>
+              <div class="p-step" id="ps-3"><span>3</span><p>TEXT EXTRACTION</p></div>
+              <div class="p-step" id="ps-4"><span>4</span><p>AI ANALYSIS</p></div>
+              <div class="p-step" id="ps-5"><span>5</span><p>COMPLIANCE MAP</p></div>
+              <div class="p-step" id="ps-6"><span>6</span><p>RISK DETECTION</p></div>
+              <div class="p-step" id="ps-7"><span>7</span><p>ACTION GEN</p></div>
+            </div>
+          </div>
+
+          <div class="panel mt-20" id="doc-result-panel" style="display: none;">
+            <div class="panel-header between">
+              <div>
+                <span class="badge-success-tag">PARSED SUCCESSFULLY</span>
+                <h5>Inspection Report - Dhanbad Mine B (Shift 2 DGMS Audit)</h5>
+              </div>
+              <button class="btn btn-outline" onclick="exportAnalysisJSON()"><i data-lucide="download"></i> Export Audit JSON</button>
+            </div>
+
+            <div class="doc-findings-grid">
+              <div class="findings-kpi">
+                <h6>Violations Detected</h6>
+                <div class="kpi-val text-red">4</div>
+                <div class="sub-breakdown">
+                  <span class="pill red">Critical: 2</span>
+                  <span class="pill yellow">Medium: 1</span>
+                  <span class="pill green">Low: 1</span>
+                </div>
+              </div>
+              <div class="findings-list-wrapper">
+                <h6>Identified Statutory Deficiencies</h6>
+                <div class="finding-item-row">
+                  <div class="tag-crit">CRITICAL</div>
+                  <div><strong>Emergency Incline Evacuation Obstruction:</strong> Haulage car parking violates DGMS Safe Exit Reg 88.</div>
+                </div>
+                <div class="finding-item-row">
+                  <div class="tag-crit">CRITICAL</div>
+                  <div><strong>Methane Telemetry Missing Calibration Seal:</strong> Sensor unit at Seam 3 past inspection cycle.</div>
+                </div>
+                <div class="finding-item-row">
+                  <div class="tag-med">MEDIUM</div>
+                  <div><strong>Overdue Dust Suppression Log:</strong> Respirable dust sampling log missing for past 14 days.</div>
+                </div>
+                <div class="finding-item-row">
+                  <div class="tag-low">LOW</div>
+                  <div><strong>Missing Signage at Substation:</strong> High voltage hazard board faded.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="ai-generated-actions mt-20">
+              <h6>Autonomous Corrective Actions Synthesized:</h6>
+              <div class="rec-buttons-group mt-10">
+                <button class="btn btn-danger"><i data-lucide="alert-octagon"></i> Dispatch Immediate Evacuation Inspection</button>
+                <button class="btn btn-outline"><i data-lucide="check-circle"></i> Issue Sensor Calibration Order</button>
+                <button class="btn btn-outline"><i data-lucide="file-plus"></i> Request Dust Monitoring Evidence</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-analytics" class="page-view">
+          <div class="grid-2-col">
+            <div class="panel">
+              <div class="panel-header between">
+                <div>
+                  <h5>7-Day Risk Trajectory Forecast</h5>
+                  <span class="panel-subtitle">Monte Carlo Risk Model (Mine B Dhanbad)</span>
+                </div>
+                <span class="tag-ai">AI Confidence: 87.4%</span>
+              </div>
+              <div class="chart-canvas-wrapper" style="height: 300px;">
+                <canvas id="predictionChart"></canvas>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <h5>Predictive Incident Forecasting</h5>
+                <span class="tag-ai">Early Warning Shield</span>
+              </div>
+              <div class="predictive-warning-box">
+                <div class="warning-header">
+                  <i data-lucide="alert-triangle"></i>
+                  <h4>CRITICAL RISK ESCALATION PROJECTED WITHIN 7 DAYS</h4>
+                </div>
+                <p>Based on recurring conveyor belt heat signatures, 3 past-due methane calibration records, and weekend shift contractor discrepancies, <strong>Mine B has an 82% probability of experiencing a Grade-1 shutdown event</strong> if actions remain unaddressed.</p>
+                
+                <h6 class="mt-15">Top Contributing Escalation Factors:</h6>
+                <div class="factor-progress-list mt-10">
+                  <div><span>Unresolved Conveyor Safety Observations</span><strong>+4.2 pts</strong></div>
+                  <div><span>Statutory Latency in Dust Suppression Audits</span><strong>+2.8 pts</strong></div>
+                  <div><span>Ghost Worker Pattern in Contractor Rosters</span><strong>+2.1 pts</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-gis" class="page-view">
+          <div class="panel gis-wrapper">
+            <div class="gis-controls-header">
+              <div class="title-meta">
+                <h5>National Coal Mine Geospatial Command</h5>
+                <span>Interactive Geographic Information System (Leaflet Grid)</span>
+              </div>
+              <div class="gis-filters">
+                <select id="gis-region-filter" onchange="filterMapMarkers()">
+                  <option value="ALL">All Indian Regions</option>
+                  <option value="Jharkhand">Jharkhand</option>
+                  <option value="Odisha">Odisha</option>
+                  <option value="Chhattisgarh">Chhattisgarh</option>
+                  <option value="Madhya Pradesh">Madhya Pradesh</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="West Bengal">West Bengal</option>
+                  <option value="Telangana">Telangana</option>
+                </select>
+                <select id="gis-risk-filter" onchange="filterMapMarkers()">
+                  <option value="ALL">All Risk Levels</option>
+                  <option value="HIGH">High / Critical Only</option>
+                  <option value="LOW">Low / Compliant Only</option>
+                </select>
+              </div>
+            </div>
+            <div id="gis-map-container" class="gis-map-container"></div>
+          </div>
+        </section>
+
+        <section id="view-copilot" class="page-view">
+          <div class="copilot-full-container panel">
+            <div class="copilot-header">
+              <div class="cop-brand">
+                <div class="cop-icon"><i data-lucide="sparkles"></i></div>
+                <div>
+                  <h4>KhanRakshak AI Governance Copilot</h4>
+                  <p>Stateful LLM Context: Mines Act 1952, DGMS Guidelines, Live Telemetry Matrix</p>
+                </div>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="clearCopilotChat()"><i data-lucide="rotate-ccw"></i> Reset Session</button>
+            </div>
+
+            <div class="copilot-suggestions">
+              <span>Try Asking:</span>
+              <button class="chip-btn" onclick="sendQuickPrompt('Which mines are currently high risk?')">Which mines are currently high risk?</button>
+              <button class="chip-btn" onclick="sendQuickPrompt('Why is Mine B high risk?')">Why is Mine B high risk?</button>
+              <button class="chip-btn" onclick="sendQuickPrompt('Show overdue compliance items.')">Show overdue compliance items</button>
+              <button class="chip-btn" onclick="sendQuickPrompt('Which contractor has the most violations?')">Which contractor has the most violations?</button>
+              <button class="chip-btn" onclick="sendQuickPrompt('Generate today\'s governance report.')">Generate today's governance report</button>
+            </div>
+
+            <div class="copilot-chat-stream" id="copilot-chat-stream">
+              <div class="chat-bubble ai">
+                <div class="avatar"><i data-lucide="bot"></i></div>
+                <div class="bubble-content">
+                  <p>Greetings, Officer Rajesh Kumar. I am your <strong>Governance Intelligence Copilot</strong>. I am monitoring all 42 coal mines across 7 subsidiaries in real time.</p>
+                  <p>How may I assist your regulatory oversight or inspection scheduling today?</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="typing-indicator" id="copilot-typing" style="display: none;">
+              <span></span><span></span><span></span>
+              <p>Analyzing mining telemetry and statutory databases...</p>
+            </div>
+
+            <div class="copilot-input-bar">
+              <input type="text" id="copilot-input" placeholder="Query mine risk, regulatory requirements, contractor records..." onkeypress="handleCopilotEnter(event)" />
+              <button class="btn btn-primary" onclick="submitCopilotMessage()"><i data-lucide="send"></i></button>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-reports" class="page-view">
+          <div class="panel-header between mb-20">
+            <div>
+              <h3>Statutory Governance & Compliance Reports</h3>
+              <p>Download certified DGMS inspection digests and board-level risk audits.</p>
+            </div>
+            <div class="btn-group-row">
+              <button class="btn btn-outline" onclick="exportDataAsCSV()"><i data-lucide="file-spreadsheet"></i> Export Master CSV</button>
+              <button class="btn btn-primary" onclick="printGovernanceReport()"><i data-lucide="printer"></i> Print / Save PDF</button>
+            </div>
+          </div>
+
+          <div class="reports-grid">
+            <div class="report-card panel">
+              <i data-lucide="file-text" class="rep-icon"></i>
+              <h5>Daily Compliance Digest</h5>
+              <p>24-hour summary of statutory filings, gas readings, and shift safety violations.</p>
+              <span class="meta">Updated Daily at 06:00 IST</span>
+              <button class="btn btn-outline btn-sm mt-10" onclick="previewReport('daily')">Generate Digest</button>
+            </div>
+            <div class="report-card panel">
+              <i data-lucide="shield-alert" class="rep-icon"></i>
+              <h5>Weekly Executive Risk Audit</h5>
+              <p>Board presentation ranking 42 mines by hazard probability and CAPA progress.</p>
+              <span class="meta">Weekly Cycle (Friday Sync)</span>
+              <button class="btn btn-outline btn-sm mt-10" onclick="previewReport('weekly')">Generate Digest</button>
+            </div>
+            <div class="report-card panel">
+              <i data-lucide="hard-hat" class="rep-icon"></i>
+              <h5>Contractor Safety & Anomaly Audit</h5>
+              <p>Deep-dive into ghost worker logs, muster-roll fraud, and recurring citations.</p>
+              <span class="meta">Fortnightly Cycle</span>
+              <button class="btn btn-outline btn-sm mt-10" onclick="previewReport('contractor')">Generate Digest</button>
+            </div>
+            <div class="report-card panel">
+              <i data-lucide="trees" class="rep-icon"></i>
+              <h5>Environmental & Dust Control Audit</h5>
+              <p>Air quality particulate count, water runoff discharge, and green cover compliance.</p>
+              <span class="meta">Monthly Statutory Filing</span>
+              <button class="btn btn-outline btn-sm mt-10" onclick="previewReport('environmental')">Generate Digest</button>
+            </div>
+          </div>
+
+          <div class="printable-report-container panel mt-25" id="printable-report-area">
+            <div class="report-print-header">
+              <div>
+                <h2>MINISTRY OF COAL & DIRECTORATE GENERAL OF MINES SAFETY</h2>
+                <h4>NATIONAL COAL GOVERNANCE INTELLIGENCE BRIEFING</h4>
+              </div>
+              <div class="print-meta-right">
+                <p>Generated: <strong>March 2026</strong></p>
+                <p>Officer: <strong>Rajesh Kumar (DGMS-RSO-09)</strong></p>
+              </div>
+            </div>
+            <hr class="report-divider" />
+            <div class="print-content" id="print-content-body">
+              </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="sim-modal-backdrop" style="display: none;">
+    <div class="modal-dialog sim-modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title"><i data-lucide="zap" class="text-orange"></i> Autonomous AI Governance Workflow Simulation</div>
+        <button class="icon-close" onclick="closeSimulationModal()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        <p class="sim-explainer">Demonstrating: Hazard Detection → Risk Engine Recalculation → Prescriptive AI Recommendation → Task Assignment → Escalation.</p>
+        
+        <div class="sim-workflow-track" id="sim-workflow-track">
+          <div class="sim-step" id="w-step-1">
+            <div class="sim-step-badge">1</div>
+            <div class="sim-step-text">
+              <strong>Incident Ingestion:</strong>
+              <span>New Critical Gas Sensor Fault Detected at Mine B (Dhanbad)</span>
+            </div>
+          </div>
+          <div class="sim-step" id="w-step-2">
+            <div class="sim-step-badge">2</div>
+            <div class="sim-step-text">
+              <strong>Recalculating Risk Vector:</strong>
+              <span>Factor weights updated: Latency + Sensor failure</span>
+            </div>
+          </div>
+          <div class="sim-step" id="w-step-3">
+            <div class="sim-step-badge">3</div>
+            <div class="sim-step-text">
+              <strong>Dynamic Risk Score Escalation:</strong>
+              <span class="text-red font-bold">72/100 (Medium) → 82/100 (CRITICAL RISK)</span>
+            </div>
+          </div>
+          <div class="sim-step" id="w-step-4">
+            <div class="sim-step-badge">4</div>
+            <div class="sim-step-text">
+              <strong>Prescriptive Action Generated:</strong>
+              <span>"Issue Immediate Inspection & Evacuate Seam 3"</span>
+            </div>
+          </div>
+          <div class="sim-step" id="w-step-5">
+            <div class="sim-step-badge">5</div>
+            <div class="sim-step-text">
+              <strong>Automatic Officer Allocation:</strong>
+              <span>Dispatched to Rajesh Kumar (Regional Safety Officer)</span>
+            </div>
+          </div>
+          <div class="sim-step" id="w-step-6">
+            <div class="sim-step-badge">6</div>
+            <div class="sim-step-text">
+              <strong>Kanban Ticket Created:</strong>
+              <span>CAPA #8929 routed to 'ESCALATED' board column</span>
+            </div>
+          </div>
+          <div class="sim-step" id="w-step-7">
+            <div class="sim-step-badge">7</div>
+            <div class="sim-step-text">
+              <strong>System Wide Alerts Triggered:</strong>
+              <span>Broadcast pushed to DGMS Central Registry Dashboard</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeSimulationModal()">Dismiss</button>
+        <button class="btn btn-primary" onclick="executeSimulationWorkflow()"><i data-lucide="play"></i> Run Simulation Sequence</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="js/mock-data.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/mines.js"></script>
+  <script src="js/compliance.js"></script>
+  <script src="js/inspections.js"></script>
+  <script src="js/contractors.js"></script>
+  <script src="js/documents.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/copilot.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
