@@ -1,0 +1,59 @@
+/* =========================================================
+   KHANRAKSHAK AI - RESPONSIVE ENHANCEMENTS
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  .grid-2-col, .grid-3-1 {
+    grid-template-columns: 1fr;
+  }
+  .global-search-wrapper {
+    width: 240px;
+  }
+  .risk-engine-grid {
+    grid-template-columns: 1fr;
+  }
+  .kanban-board-container {
+    grid-template-columns: repeat(3, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -260px;
+    height: 100vh;
+    transition: left 0.3s ease;
+  }
+  .sidebar.mobile-open {
+    left: 0;
+  }
+  .mobile-only {
+    display: block !important;
+  }
+  .topbar {
+    padding: 0 12px;
+  }
+  .global-search-wrapper, .live-sync-indicator {
+    display: none;
+  }
+  .content-viewport {
+    padding: 12px;
+  }
+  .kanban-board-container {
+    grid-template-columns: 1fr;
+  }
+  .vision-stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pipeline-stepper {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
